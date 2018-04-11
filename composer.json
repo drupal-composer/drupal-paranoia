@@ -1,0 +1,21 @@
+{
+  "name": "drupal-composer/drupal-paranoia",
+  "description": "Composer Plugin for improving the security of composer-based Drupal projects by moving all PHP files out of docroot.",
+  "type": "composer-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+      "php": ">=5.4.5",
+      "composer-plugin-api": "^1.1"
+  },
+  "autoload": {
+      "psr-4": {
+          "DrupalComposer\\DrupalParanoia\\": "src/"
+      }
+  },
+  "extra": {
+      "class": "DrupalComposer\\DrupalParanoia\\Plugin"
+  },
+  "require-dev": {
+      "composer/composer": "dev-master"
+  }
+}
