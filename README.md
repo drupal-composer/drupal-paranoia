@@ -48,10 +48,10 @@ composer require drupal-composer/drupal-paranoia:~1
 
 Done! Plugin and new docroot are now installed.
 
-## Folders structure
-Your project now is structured on two main folders.
-- __app__: Contains the full Drupal installation files and folders.
-- __web__: Contains only __asset files symlinks__ from the `app` folder, such as css, js, images, fonts and .htaccess. 
+## Folder structure
+Your project now is basically structured on two folders.
+- __app__: Contains the files and folders of the full Drupal installation.
+- __web__: Contains only the __symlinks of the assets files__ and the __PHP stub files__ from the `app` folder.
 
 Every time that you install or update a Drupal package via Composer, the `web` folder is automatically recreated.
 
