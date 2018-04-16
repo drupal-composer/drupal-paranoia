@@ -7,6 +7,7 @@ use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Installer\PackageEvent;
 use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
+use Composer\Plugin\Capable;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
@@ -14,7 +15,7 @@ use Composer\Script\ScriptEvents;
 /**
  * Composer plugin to move all PHP files out of the docroot.
  */
-class Plugin implements PluginInterface, EventSubscriberInterface {
+class Plugin implements PluginInterface, EventSubscriberInterface, Capable {
 
   /**
    * The installer object.
@@ -28,6 +29,15 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    */
   public function activate(Composer $composer, IOInterface $io) {
     $this->installer = new Installer($composer, $io);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCapabilities() {
+    return array(
+      'Composer\Plugin\Capability\CommandProvider' => 'DrupalComposer\DrupalParanoia\CommandProvider',
+    );
   }
 
   /**
@@ -61,17 +71,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    */
   public function postCmd(Event $event) {
     $this->installer->onPostCmdEvent();
-  }
-
-  /**
-   * Script callback for installing the paranoia mode.
-   *
-   * @param \Composer\Script\Event $event
-   *   Event object.
-   */
-  public static function install(Event $event) {
-    $installer = new Installer($event->getComposer(), $event->getIO());
-    $installer->install();
   }
 
 }

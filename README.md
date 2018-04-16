@@ -20,12 +20,6 @@ mv web app
 
 Update the `composer.json` of your root package with the following changes:
 ```json
-"scripts": {
-    "drupal-paranoia": "DrupalComposer\\DrupalParanoia\\Plugin::install",
-    "..."
-}
-```
-```json
 "extra": {
     "installer-paths": {
         "app/core": ["type:drupal-core"],
@@ -57,7 +51,7 @@ Every time that you install or update a Drupal package via Composer, the `web` f
 
 If necessary, you can rebuild it manually, running the command
 ```
-composer run-script drupal-paranoia
+composer drupal:paranoia
 ```
 
 This could be necessary when updating themes images, CSS and JS files.
