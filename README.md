@@ -1,8 +1,10 @@
+[![Build Status](https://travis-ci.org/drupal-composer/drupal-paranoia.svg?branch=1.x)](https://travis-ci.org/drupal-composer/drupal-paranoia)
+
 # Drupal Paranoia
 Composer plugin for improving the website security for composer-based Drupal websites by moving all __PHP files out of docroot__.
 
 ## Why use this Plugin?
-The critical security issue with [Coder](https://www.drupal.org/project/coder) is a good example to consider moving PHP files outside of docroot: 
+The critical security issue with [Coder](https://www.drupal.org/project/coder) is a good example to consider moving PHP files outside of docroot:
 - [Remote Code Execution - SA-CONTRIB-2016-039](https://www.drupal.org/node/2765575)
 - https://twitter.com/drupalsecurity/status/753263548458004480
 
