@@ -12,6 +12,9 @@ More related links:
 - [Moving all PHP files out of the docroot](https://www.drupal.org/node/2767907)
 - [#1672986: Option to have all php files outside of web root](https://www.drupal.org/node/1672986)
 
+## Requirements
+Except for Windows, this plugin should work on environments that have Composer support. [Windows support issue](https://github.com/drupal-composer/drupal-paranoia/issues/5).
+
 ## Configuration
 Make sure you have a based [drupal-composer/drupal-project](https://github.com/drupal-composer/drupal-project) project created.
 
