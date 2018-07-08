@@ -118,3 +118,41 @@ if [ ! -L "$SITE_WEB/themes/travis-test-image.jpg" ]; then
 else
   echo "${MSG_OK} 'composer drupal:paranoia' command re-created the web directory with new symlinks"
 fi
+
+##
+# Create a "customfile.txt", configure the 'drupal-asset-files' extra key,
+# run the command 'composer drupal:paranoia' and check if the file has been symlinked.
+#
+echo "${MSG_INFO} Create a \"customfile.txt\" and configure the 'drupal-asset-files' extra key to check if the file has been symlinked."
+
+touch "$SITE_APP/customfile.txt"
+composer config extra.drupal-asset-files.should-be-simlinked customfile.txt
+
+# Rebuild web directory.
+composer drupal:paranoia || exit 1
+
+if [ ! -L "$SITE_WEB/customfile.txt" ]; then
+  echo "${MSG_ERROR} 'composer drupal:paranoia' command did not re-create the web directory with extra symlinks"
+  exit 1
+else
+  echo "${MSG_OK} 'composer drupal:paranoia' command re-created the web directory with extra symlinks"
+fi
+
+##
+# Create a "customfile.php", configure the 'drupal-asset-files' extra key,
+# run the command 'composer drupal:paranoia' and check if the file has not been symlinked.
+#
+echo "${MSG_INFO} Create a \"customfile.php\" and configure the 'drupal-asset-files' extra key to check if the file has not been symlinked."
+
+touch "$SITE_APP/customfile.php"
+composer config extra.drupal-asset-files.should-not-be-simlinked customfile.php
+
+# Rebuild web directory.
+composer drupal:paranoia || exit 1
+
+if [ -L "$SITE_WEB/customfile.php" ]; then
+  echo "${MSG_ERROR} 'composer drupal:paranoia' command re-created the web directory with WRONG extra symlinks"
+  exit 1
+else
+  echo "${MSG_OK} 'composer drupal:paranoia' command did not re-create the web directory with WRONG extra symlinks"
+fi
