@@ -51,7 +51,7 @@ class AssetFileTypesEvent extends Event {
    * @param \Composer\IO\IOInterface $io
    *   The IOInterface object.
    * @param array $args
-   *   Arguments passed by the user
+   *   Arguments passed by the user.
    * @param array $flags
    *   Optional flags to pass data not as argument.
    */
@@ -64,28 +64,40 @@ class AssetFileTypesEvent extends Event {
   }
 
   /**
+   * Gets the Composer object.
+   *
    * @return \Composer\Composer
+   *   The Composer object.
    */
   public function getComposer() {
     return $this->composer;
   }
 
   /**
+   * Gets the IO object.
+   *
    * @return \Composer\IO\IOInterface
+   *   The IO object.
    */
   public function getIo() {
     return $this->io;
   }
 
   /**
+   * Returns the asset file types.
+   *
    * @return array
+   *   A list containing the file types.
    */
   public function getAssetFileTypes() {
     return $this->assetFileTypes;
   }
 
   /**
+   * Sets the asset file types.
+   *
    * @param array $assetFileTypes
+   *   A list containing the file types.
    */
   public function setAssetFileTypes(array $assetFileTypes) {
     $this->assetFileTypes = $assetFileTypes;

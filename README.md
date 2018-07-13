@@ -47,9 +47,9 @@ composer require drupal-composer/drupal-paranoia:~1
 
 Done! Plugin and new docroot are now installed.
 
-## Optional Configuration
+### Optional Configuration
 
-### Modify the asset file types
+#### Modify the asset file types
 
 To extend the list of assets file types you can use the
 `drupal-asset-files` extra key:
@@ -63,7 +63,7 @@ To extend the list of assets file types you can use the
 }
 ```
 
-If you need to modify it you can use the 
+If you need to modify it you can use the
 `post-drupal-set-asset-file-types` event:
 ```json
 "scripts": {

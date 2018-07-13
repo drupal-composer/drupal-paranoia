@@ -257,7 +257,12 @@ class Installer {
       $finder->name($name);
     }
     $finder->exclude('sites/default/files');
-    $finder->notName('/\.php/');
+    $finder->notName('*.inc');
+    $finder->notName('*.install');
+    $finder->notName('*.module');
+    $finder->notName('*.php');
+    $finder->notName('*.profile');
+    $finder->notName('*.theme');
 
     $cfs = new ComposerFilesystem();
 
@@ -319,7 +324,7 @@ EOF;
 
     // Allow people to extend the list from a composer extra key.
     $extra = $this->composer->getPackage()->getExtra();
-    if(!empty($extra['drupal-asset-files'])) {
+    if (!empty($extra['drupal-asset-files'])) {
       $this->assetFileTypes = array_merge($this->assetFileTypes, $extra['drupal-asset-files']);
     }
 

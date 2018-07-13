@@ -14,6 +14,12 @@ matrix:
 
 env:
   global:
+    # Set the composer vendor Path.
+    - COMPOSER_VENDOR_PATH="$HOME/.composer/vendor"
+
+    # Add executables into PATH.
+    - PATH="$PATH:$COMPOSER_VENDOR_PATH/bin"
+
     - SITE_NAME="mysite"
     - SITE_ROOT="$TRAVIS_BUILD_DIR/../$SITE_NAME"
 
@@ -27,6 +33,11 @@ before_install:
 
   # Install composer parallel install plugin.
   - composer global require hirak/prestissimo --no-interaction
+
+  #  Install PHP Code Sniffer and Drupal Coding standards.
+  - composer global require drupal/coder --prefer-dist -vvv || exit 1
+  - phpcs --config-set installed_paths "$COMPOSER_VENDOR_PATH/drupal/coder/coder_sniffer"
+  - phpcs --config-set ignore_warnings_on_exit 1
 
 install:
   # Create Drupal project.
@@ -45,3 +56,6 @@ install:
 script:
   # Run test script.
   - $TRAVIS_BUILD_DIR/.travis/test-script.sh
+
+  # Sniff code standards.
+  - phpcs --standard=Drupal --ignore=*.md,*.txt --warning-severity=0 -d date.timezone=UTC .
