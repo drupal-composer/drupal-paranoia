@@ -35,9 +35,9 @@ before_install:
   - composer global require hirak/prestissimo --no-interaction
 
   #  Install PHP Code Sniffer and Drupal Coding standards.
-  - composer global require drupal/coder --prefer-dist -vvv || exit 1
-  - phpcs --config-set installed_paths "$COMPOSER_VENDOR_PATH/drupal/coder/coder_sniffer"
-  - phpcs --config-set ignore_warnings_on_exit 1
+  #- composer global require drupal/coder --prefer-dist -vvv || exit 1
+  #- phpcs --config-set installed_paths "$COMPOSER_VENDOR_PATH/drupal/coder/coder_sniffer"
+  #- phpcs --config-set ignore_warnings_on_exit 1
 
 install:
   # Create Drupal project.
@@ -58,4 +58,4 @@ script:
   - $TRAVIS_BUILD_DIR/.travis/test-script.sh
 
   # Sniff code standards.
-  - phpcs --standard=Drupal --ignore=*.md,*.txt --warning-severity=0 -d date.timezone=UTC .
+  #- phpcs --standard=Drupal --ignore=*.md,*.txt --warning-severity=0 -d date.timezone=UTC .
