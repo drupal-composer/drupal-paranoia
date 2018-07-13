@@ -21,6 +21,13 @@ use Symfony\Component\Finder\Finder;
 class Installer {
 
   /**
+   * Composer object.
+   *
+   * @var \Composer\Composer
+   */
+  protected $composer;
+
+  /**
    * IO object.
    *
    * @var \Composer\IO\IOInterface
@@ -32,22 +39,7 @@ class Installer {
    *
    * @var array
    */
-  public $assetFileTypes = [
-    '.htaccess',
-    '*.css',
-    '*.eot',
-    '*.ico',
-    '*.gif',
-    '*.jpeg',
-    '*.jpg',
-    '*.js',
-    '*.otf',
-    '*.png',
-    '*.svg',
-    '*.ttf',
-    '*.woff',
-    '*.woff2',
-  ];
+  public $assetFileTypes;
 
   /**
    * Front controllers.
@@ -98,9 +90,10 @@ class Installer {
    *   The IO object.
    */
   public function __construct(Composer $composer, IOInterface $io) {
+    $this->composer = $composer;
     $this->io = $io;
 
-    $extra = $composer->getPackage()->getExtra();
+    $extra = $this->composer->getPackage()->getExtra();
 
     if (!isset($extra['drupal-app-dir'])) {
       throw new \RuntimeException('Please configure drupal-app-dir in your composer.json');
@@ -117,6 +110,8 @@ class Installer {
     if (!empty($extra['drupal-web-dir-public-files'])) {
       $this->publicFilesSymlinkTarget = $extra['drupal-web-dir-public-files'];
     }
+
+    $this->setAssetFileTypes();
   }
 
   /**
@@ -262,6 +257,7 @@ class Installer {
       $finder->name($name);
     }
     $finder->exclude('sites/default/files');
+    $finder->notName('/\.php/');
 
     $cfs = new ComposerFilesystem();
 
@@ -297,6 +293,40 @@ require './$filename';
 EOF;
 
     $fs->dumpFile($webDir . '/' . $path, $content);
+  }
+
+  /**
+   * Set the asset file types.
+   */
+  public function setAssetFileTypes() {
+    $this->assetFileTypes = [
+      'robots.txt',
+      '.htaccess',
+      '*.css',
+      '*.eot',
+      '*.ico',
+      '*.gif',
+      '*.jpeg',
+      '*.jpg',
+      '*.js',
+      '*.otf',
+      '*.png',
+      '*.svg',
+      '*.ttf',
+      '*.woff',
+      '*.woff2',
+    ];
+
+    // Allow people to extend the list from a composer extra key.
+    $extra = $this->composer->getPackage()->getExtra();
+    if(!empty($extra['drupal-asset-files'])) {
+      $this->assetFileTypes = array_merge($this->assetFileTypes, $extra['drupal-asset-files']);
+    }
+
+    // Allow other plugins to alter the list of files.
+    $event = new AssetFileTypesEvent($this->assetFileTypes, $this->composer, $this->io);
+    $this->composer->getEventDispatcher()->dispatch($event->getName(), $event);
+    $this->assetFileTypes = $event->getAssetFileTypes();
   }
 
 }

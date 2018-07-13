@@ -47,6 +47,56 @@ composer require drupal-composer/drupal-paranoia:~1
 
 Done! Plugin and new docroot are now installed.
 
+## Optional Configuration
+
+### Modify the asset file types
+
+To extend the list of assets file types you can use the
+`drupal-asset-files` extra key:
+```json
+"extra": {
+    "drupal-asset-files": [
+        "somefile.txt",
+        "*.md"
+    ],
+    "..."
+}
+```
+
+If you need to modify it you can use the 
+`post-drupal-set-asset-file-types` event:
+```json
+"scripts": {
+    "post-drupal-set-asset-file-types": [
+        "DrupalProject\\composer\\ScriptHandler::setAssetFileTypes"
+    ],
+    "..."
+},
+```
+
+```php
+<?php
+
+/**
+ * @file
+ * Contains \DrupalProject\composer\ScriptHandler.
+ */
+
+namespace DrupalProject\composer;
+
+use DrupalComposer\DrupalParanoia\AssetFileTypesEvent;
+
+class ScriptHandler {
+
+  public static function setAssetFileTypes(AssetFileTypesEvent $event) {
+    $asset_file_types = $event->getAssetFileTypes();
+    // Do what you want with the asset file types.
+    $event->setAssetFileTypes($asset_file_types);
+  }
+
+}
+```
+
 ## Folder structure
 Your project now is basically structured on two folders.
 - __app__: Contains the files and folders of the full Drupal installation.
