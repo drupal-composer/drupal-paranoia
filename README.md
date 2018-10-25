@@ -97,6 +97,48 @@ class ScriptHandler {
 }
 ```
 
+#### Plugin events
+This plugin fires the following named event during its execution process:
+
+- __drupal-paranoia-post-command-run__: Occurs after the command `drupal:paranoia` is executed.
+
+##### Example of event subscriber
+
+```php
+<?php
+
+namespace MyVendor;
+
+use Composer\Composer;
+use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\IO\IOInterface;
+use Composer\Plugin\PluginInterface;
+use DrupalComposer\DrupalParanoia\PluginEvents as DrupalParanoiaPluginEvents;
+
+class MyClass implements PluginInterface, EventSubscriberInterface
+{
+    protected $composer;
+    protected $io;
+
+    public function activate(Composer $composer, IOInterface $io)
+    {
+        $this->composer = $composer;
+        $this->io = $io;
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return array(
+            DrupalParanoiaPluginEvents::POST_COMMAND_RUN => 'postDrupalParanoiaCommand',
+        );
+    }
+
+    public function postDrupalParanoiaCommand(CommandEvent $event) {
+        // Add your custom action.
+    }
+}
+```
+
 ## Folder structure
 Your project now is basically structured on two folders.
 - __app__: Contains the files and folders of the full Drupal installation.
