@@ -106,11 +106,6 @@ class Installer {
     $this->appDir = $extra['drupal-app-dir'];
     $this->webDir = $extra['drupal-web-dir'];
 
-    $this->publicFilesSymlinkTarget = $this->appDir . '/sites/default/files';
-    if (!empty($extra['drupal-web-dir-public-files'])) {
-      $this->publicFilesSymlinkTarget = $extra['drupal-web-dir-public-files'];
-    }
-
     $this->setAssetFileTypes();
   }
 
@@ -236,14 +231,16 @@ class Installer {
    */
   public function createPublicFilesSymlink() {
     $cfs = new ComposerFilesystem();
+    $finder = new Finder();
 
-    $symlinkTarget = $this->publicFilesSymlinkTarget;
-    if (!file_exists(realpath($symlinkTarget))) {
-      $symlinkTarget = $this->appDir . '/sites/default/files';
+    $finder->in($this->appDir . '/sites')
+      ->depth(0);
+
+    /** @var \Symfony\Component\Finder\SplFileInfo $directory */
+    foreach ($finder->directories() as $directory) {
+      $cfs->ensureDirectoryExists($this->webDir . '/sites/' . $directory->getFilename());
+      $cfs->relativeSymlink($directory->getRealPath() . '/files', realpath($this->webDir) . '/sites/' . $directory->getFilename() . '/files');
     }
-
-    $cfs->ensureDirectoryExists($this->webDir . '/sites/default');
-    $cfs->relativeSymlink(realpath($symlinkTarget), realpath($this->webDir) . '/sites/default/files');
   }
 
   /**

@@ -45,6 +45,11 @@ STUB_FILES=(
 "web/core/modules/statistics/statistics.php"
 )
 
+is_directory_symlinked(){
+  local directory_to_check="$1"
+  [[ -L "${directory_to_check}" && -d "${directory_to_check}" ]]
+}
+
 for STUB_FILE_PATH in ${STUB_FILES[*]}; do
   if [ ! -f "$STUB_FILE_PATH" ]; then
     echo "${MSG_ERROR} stub file '$STUB_FILE_PATH' does not exist"
@@ -117,6 +122,25 @@ if [ ! -L "$SITE_WEB/themes/travis-test-image.jpg" ]; then
   exit 1
 else
   echo "${MSG_OK} 'composer drupal:paranoia' command re-created the web directory with new symlinks"
+fi
+
+##
+# Simulate a multisites configuration, run the command 'composer drupal:paranoia'
+# and check if the public files directory has been symlinked.
+#
+echo "${MSG_INFO} Create a \"site1\" folder to check if the public files directory has been symlinked."
+
+mkdir -p "${SITE_APP}"/sites/{default,site1}/files
+
+# Rebuild web directory.
+composer drupal:paranoia || exit 1
+
+is_directory_symlinked "$SITE_WEB/sites/site1/files" && is_directory_symlinked "$SITE_WEB/sites/default/files"
+if [[ "$?" != 0 ]]; then
+  echo "${MSG_ERROR} 'composer drupal:paranoia' command did not re-create the web directory with extra symlinks on public files folder"
+  exit 1
+else
+  echo "${MSG_OK} 'composer drupal:paranoia' command re-created the web directory with extra symlinks on public files folder"
 fi
 
 ##
