@@ -1,3 +1,4 @@
+[![Packagist Downloads](https://img.shields.io/packagist/dt/drupal-composer/drupal-paranoia.svg)](https://packagist.org/packages/drupal-composer/drupal-paranoia)
 [![Build Status](https://travis-ci.org/drupal-composer/drupal-paranoia.svg?branch=1.x)](https://travis-ci.org/drupal-composer/drupal-paranoia)
 
 # Drupal Paranoia
