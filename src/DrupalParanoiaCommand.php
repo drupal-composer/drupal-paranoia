@@ -3,6 +3,7 @@
 namespace DrupalComposer\DrupalParanoia;
 
 use Composer\Command\BaseCommand;
+use Composer\Plugin\CommandEvent;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -30,6 +31,10 @@ class DrupalParanoiaCommand extends BaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $installer = new Installer($this->getComposer(), $this->getIO());
     $installer->install();
+
+    $composer = $this->getComposer();
+    $commandEvent = new CommandEvent(PluginEvents::POST_COMMAND_RUN, 'drupal:paranoia', $input, $output);
+    $composer->getEventDispatcher()->dispatch($commandEvent->getName(), $commandEvent);
   }
 
 }
