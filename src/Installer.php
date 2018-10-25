@@ -75,13 +75,6 @@ class Installer {
   public $webDir;
 
   /**
-   * The symlink target for the public files folder.
-   *
-   * @var string
-   */
-  public $publicFilesSymlinkTarget;
-
-  /**
    * Installer constructor.
    *
    * @param \Composer\Composer $composer
@@ -250,6 +243,7 @@ class Installer {
     $finder = new Finder();
 
     $finder->ignoreDotFiles(FALSE)->in($this->appDir);
+
     foreach ($this->assetFileTypes as $name) {
       $finder->name($name);
     }

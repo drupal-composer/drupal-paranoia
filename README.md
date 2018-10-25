@@ -45,7 +45,7 @@ Use `composer require ...` to install this Plugin on your project.
 composer require drupal-composer/drupal-paranoia:~1
 ```
 
-Done! Plugin and new docroot are now installed.
+Done! The plugin and the new docroot are now installed.
 
 ### Optional Configuration
 
@@ -110,6 +110,9 @@ composer drupal:paranoia
 ```
 
 This could be necessary when updating themes images, CSS and JS files.
+
+### Public files
+This plugin assumes that the public files folder exists at `app/sites/<site>/files` and symlinks `web/sites/<site>/files -> ../../../app/sites/<site>/files`.
 
 ## Important
 The document root configuration of your web server should point to the `web` path.
