@@ -284,6 +284,7 @@ class Installer {
     $finder->notName('*.inc');
     $finder->notName('*.install');
     $finder->notName('*.module');
+    $finder->notName('*.phar');
     $finder->notName('*.php');
     $finder->notName('*.profile');
     $finder->notName('*.theme');

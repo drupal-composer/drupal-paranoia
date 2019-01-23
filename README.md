@@ -6,7 +6,7 @@ Composer plugin for improving the website security for composer-based Drupal web
 
 ## Why use this Plugin?
 The critical security issue with [Coder](https://www.drupal.org/project/coder) is a good example to consider moving PHP files outside of docroot:
-- [Remote Code Execution - SA-CONTRIB-2016-039](https://www.drupal.org/node/2765575)
+- [SA-CONTRIB-2016-039 - Remote Code Execution](https://www.drupal.org/node/2765575)
 - https://twitter.com/drupalsecurity/status/753263548458004480
 
 More related links:
@@ -14,19 +14,24 @@ More related links:
 - [#1672986: Option to have all php files outside of web root](https://www.drupal.org/node/1672986)
 
 ## Requirements
-Except for Windows, this plugin should work on environments that have Composer support. [Windows support issue](https://github.com/drupal-composer/drupal-paranoia/issues/5).
+Except for Windows, this plugin should work on environments that have Composer support. Do you use Windows? [Help us](https://github.com/drupal-composer/drupal-paranoia/issues/5).
 
-## Configuration
+## Installation
 Make sure you have a based [drupal-composer/drupal-project](https://github.com/drupal-composer/drupal-project) project created.
 
-Rename your current docroot directory to `app`.
+Rename your current docroot directory to `/app`.
 ```
+cd drupal-project-root
 mv web app
 ```
 
-Update the `composer.json` of your root package with the following changes:
+Update the `composer.json` of your root package with the following values:
 ```json
 "extra": {
+    "drupal-paranoia": {
+        "app-dir": "app",
+        "web-dir": "web"
+    },
     "installer-paths": {
         "app/core": ["type:drupal-core"],
         "app/libraries/{$name}": ["type:drupal-library"],
@@ -34,14 +39,13 @@ Update the `composer.json` of your root package with the following changes:
         "app/profiles/contrib/{$name}": ["type:drupal-profile"],
         "app/themes/contrib/{$name}": ["type:drupal-theme"],
         "drush/contrib/{$name}": ["type:drupal-drush"]
-    },
-    "drupal-paranoia": {
-        "app-dir": "app",
-        "web-dir": "web"
-    },
-    "..."
+    }
 }
 ```
+
+Explaining:
+- __/app__ folder: Drupal full installation.
+- __/web__ folder: Will contain only symlinks of the assets files and PHP stub files (index.php, install.php, etc) from the `/app` folder.
 
 Use `composer require ...` to install this Plugin on your project.
 ```
@@ -50,14 +54,31 @@ composer require drupal-composer/drupal-paranoia:~1
 
 Done! The plugin and the new docroot are now installed.
 
-### Optional Configurations
+### Asset file types
+The asset files are symlinked from `/app` to `/web` folder.
 
-#### Modify the asset file types
+Default asset file types are provided by the plugin:
+```
+robots.txt
+.htaccess
+*.css
+*.eot
+*.ico
+*.gif
+*.jpeg
+*.jpg
+*.js
+*.otf
+*.png
+*.svg
+*.ttf
+*.woff
+*.woff2
+```
 
 To extend the list of assets file types you can use the `asset-files` config:
 ```json
 "extra": {
-    "...",
     "drupal-paranoia": {
         "app-dir": "app",
         "web-dir": "web",
@@ -70,8 +91,7 @@ To extend the list of assets file types you can use the `asset-files` config:
 }
 ```
 
-If you need to modify it you can use the
-`post-drupal-set-asset-file-types` event:
+If you need to modify the list you can use the `post-drupal-set-asset-file-types` event:
 ```json
 "scripts": {
     "post-drupal-set-asset-file-types": [
@@ -104,12 +124,26 @@ class ScriptHandler {
 }
 ```
 
-#### Plugin events
+By the purpose of this plugin, the following files types are __not allowed__ and if listed they will be ignored:
+```
+*.inc
+*.install
+*.module
+*.phar
+*.php
+*.profile
+*.theme
+```
+
+### Web server docroot
+Change the document root config of your web server to point to `/web` folder.
+
+## Plugin events
 This plugin fires the following named event during its execution process:
 
 - __drupal-paranoia-post-command-run__: Occurs after the command `drupal:paranoia` is executed.
 
-##### Example of event subscriber
+### Example of event subscriber
 
 ```php
 <?php
@@ -146,22 +180,18 @@ class MyClass implements PluginInterface, EventSubscriberInterface
 }
 ```
 
-## Folder structure
-Your project now is basically structured on two folders.
-- __app__: Contains the files and folders of the full Drupal installation.
-- __web__: Contains only the __symlinks of the assets files__ and the __PHP stub files__ from the `app` folder.
+## Local development
+Every time you install or update a Drupal package via Composer, the `/web` folder will recreated.
 
-Every time that you install or update a Drupal package via Composer, the `web` folder is automatically recreated.
+```
+composer require drupal/devel:~1.0
+> drupal-paranoia: docroot folder has been rebuilt.
+```
 
-If necessary, you can rebuild it manually, running the command
+When working with themes, CSS and JS for example, it may be necessary to rebuild the folder manually to symlink the new assets.
 ```
 composer drupal:paranoia
 ```
 
-This could be necessary when updating themes images, CSS and JS files.
-
 ### Public files
 This plugin assumes that the public files folder exists at `app/sites/<site>/files` and symlinks `web/sites/<site>/files -> ../../../app/sites/<site>/files`.
-
-## Important
-The document root configuration of your web server should point to the `web` path.
