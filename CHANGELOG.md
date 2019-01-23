@@ -2,6 +2,9 @@
 
 ## Releases
 
+### 1.0.0-beta3, 2019-01-23
+- [PR#12] Namespaced composer config. See: https://github.com/drupal-composer/drupal-paranoia/pull/12.
+
 ### 1.0.0-beta2, 2018-10-25
 - [#9] Added support for multisite.
 - [#9] Removed config `drupal-web-dir-public-files`.
