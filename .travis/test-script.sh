@@ -150,7 +150,7 @@ fi
 echo "${MSG_INFO} Create a \"customfile.txt\" and configure the 'asset-files' extra key to check if the file has been symlinked."
 
 touch "$SITE_APP/customfile.txt"
-composer config extra.drupal-paranoia.asset-files.should-be-simlinked customfile.txt
+composer config extra.drupal-paranoia.asset-files token_list_files; sed -i -e "s/\"token_list_files\"/\[\"customfile.txt\"\]/" composer.json
 
 # Rebuild web directory.
 composer drupal:paranoia || exit 1
@@ -169,7 +169,7 @@ fi
 echo "${MSG_INFO} Create a \"customfile.php\" and configure the 'asset-files' extra key to check if the file has not been symlinked."
 
 touch "$SITE_APP/customfile.php"
-composer config extra.drupal-paranoia.asset-files.should-not-be-simlinked customfile.php
+composer config extra.drupal-paranoia.asset-files token_list_files; sed -i -e "s/\"token_list_files\"/\[\"customfile.php\"\]/" composer.json
 
 # Rebuild web directory.
 composer drupal:paranoia || exit 1
