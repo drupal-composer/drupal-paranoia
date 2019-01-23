@@ -35,8 +35,10 @@ Update the `composer.json` of your root package with the following changes:
         "app/themes/contrib/{$name}": ["type:drupal-theme"],
         "drush/contrib/{$name}": ["type:drupal-drush"]
     },
-    "drupal-app-dir": "app",
-    "drupal-web-dir": "web",
+    "drupal-paranoia": {
+        "app-dir": "app",
+        "web-dir": "web"
+    },
     "..."
 }
 ```
@@ -48,18 +50,22 @@ composer require drupal-composer/drupal-paranoia:~1
 
 Done! The plugin and the new docroot are now installed.
 
-### Optional Configuration
+### Optional Configurations
 
 #### Modify the asset file types
 
-To extend the list of assets file types you can use the
-`drupal-asset-files` extra key:
+To extend the list of assets file types you can use the `asset-files` config:
 ```json
 "extra": {
-    "drupal-asset-files": [
-        "somefile.txt",
-        "*.md"
-    ],
+    "...",
+    "drupal-paranoia": {
+        "app-dir": "app",
+        "web-dir": "web",
+        "asset-files": [
+            "somefile.txt",
+            "*.md"
+        ]
+    },
     "..."
 }
 ```

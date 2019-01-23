@@ -46,8 +46,8 @@ install:
   # https://github.com/drupal-composer/drupal-paranoia#configuration
   - cd "$SITE_ROOT"; mv "$SITE_ROOT/web" "$SITE_ROOT/app"
   - sed -e "s?web/?app/?g" --in-place "$SITE_ROOT/composer.json"
-  - cd "$SITE_ROOT"; composer config extra.drupal-app-dir app
-  - cd "$SITE_ROOT"; composer config extra.drupal-web-dir web
+  - cd "$SITE_ROOT"; composer config extra.drupal-paranoia.app-dir app
+  - cd "$SITE_ROOT"; composer config extra.drupal-paranoia.web-dir web
 
   # Require local drupal-paranoia project.
   - cd "$SITE_ROOT"; composer config repositories.local_drupal_paranoia path "$TRAVIS_BUILD_DIR"

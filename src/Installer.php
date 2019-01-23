@@ -46,12 +46,12 @@ class Installer {
    *
    * @var array
    */
-  public $frontControllers = [
+  public $frontControllers = array(
     'index.php',
     'core/install.php',
     'core/rebuild.php',
     'core/modules/statistics/statistics.php',
-  ];
+  );
 
   /**
    * Flag indicating whether is to run the paranoia installation or not.
@@ -86,20 +86,53 @@ class Installer {
     $this->composer = $composer;
     $this->io = $io;
 
-    $extra = $this->composer->getPackage()->getExtra();
-
-    if (!isset($extra['drupal-app-dir'])) {
-      throw new \RuntimeException('Please configure drupal-app-dir in your composer.json');
+    $app_dir = $this->getConfig('app-dir');
+    if (!$app_dir) {
+      throw new \RuntimeException('Please configure app-dir in your composer.json');
     }
 
-    if (!isset($extra['drupal-web-dir'])) {
-      throw new \RuntimeException('Please configure drupal-web-dir in your composer.json');
+    $web_dir = $this->getConfig('web-dir');
+    if (!$web_dir) {
+      throw new \RuntimeException('Please configure web-dir in your composer.json');
     }
 
-    $this->appDir = $extra['drupal-app-dir'];
-    $this->webDir = $extra['drupal-web-dir'];
+    $this->appDir = $app_dir;
+    $this->webDir = $web_dir;
 
     $this->setAssetFileTypes();
+  }
+
+  /**
+   * Returns the value of a plugin config.
+   *
+   * @param string $name
+   *   The config name.
+   *
+   * @return mixed
+   *   The config value.
+   */
+  public function getConfig($name) {
+    $extra = $this->composer->getPackage()->getExtra();
+
+    // TODO: Backward compatibility for old configs. Remove on stable version.
+    $legacy_configs = array(
+      'drupal-app-dir',
+      'drupal-web-dir',
+      'drupal-asset-files',
+    );
+    if (in_array("drupal-$name", $legacy_configs) && isset($extra["drupal-$name"])) {
+      return $extra["drupal-$name"];
+    }
+
+    if (!isset($extra['drupal-paranoia'])) {
+      return NULL;
+    }
+
+    if (isset($extra['drupal-paranoia'][$name])) {
+      return $extra['drupal-paranoia'][$name];
+    }
+
+    return NULL;
   }
 
   /**
@@ -295,7 +328,7 @@ EOF;
    * Set the asset file types.
    */
   public function setAssetFileTypes() {
-    $this->assetFileTypes = [
+    $this->assetFileTypes = array(
       'robots.txt',
       '.htaccess',
       '*.css',
@@ -311,12 +344,12 @@ EOF;
       '*.ttf',
       '*.woff',
       '*.woff2',
-    ];
+    );
 
     // Allow people to extend the list from a composer extra key.
-    $extra = $this->composer->getPackage()->getExtra();
-    if (!empty($extra['drupal-asset-files'])) {
-      $this->assetFileTypes = array_merge($this->assetFileTypes, $extra['drupal-asset-files']);
+    $extra_asset_files = $this->getConfig('asset-files');
+    if ($extra_asset_files) {
+      $this->assetFileTypes = array_merge($this->assetFileTypes, $extra_asset_files);
     }
 
     // Allow other plugins to alter the list of files.

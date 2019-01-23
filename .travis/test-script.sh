@@ -144,13 +144,13 @@ else
 fi
 
 ##
-# Create a "customfile.txt", configure the 'drupal-asset-files' extra key,
+# Create a "customfile.txt", configure the 'asset-files' extra key,
 # run the command 'composer drupal:paranoia' and check if the file has been symlinked.
 #
-echo "${MSG_INFO} Create a \"customfile.txt\" and configure the 'drupal-asset-files' extra key to check if the file has been symlinked."
+echo "${MSG_INFO} Create a \"customfile.txt\" and configure the 'asset-files' extra key to check if the file has been symlinked."
 
 touch "$SITE_APP/customfile.txt"
-composer config extra.drupal-asset-files.should-be-simlinked customfile.txt
+composer config extra.drupal-paranoia.asset-files.should-be-simlinked customfile.txt
 
 # Rebuild web directory.
 composer drupal:paranoia || exit 1
@@ -163,13 +163,13 @@ else
 fi
 
 ##
-# Create a "customfile.php", configure the 'drupal-asset-files' extra key,
+# Create a "customfile.php", configure the 'asset-files' extra key,
 # run the command 'composer drupal:paranoia' and check if the file has not been symlinked.
 #
-echo "${MSG_INFO} Create a \"customfile.php\" and configure the 'drupal-asset-files' extra key to check if the file has not been symlinked."
+echo "${MSG_INFO} Create a \"customfile.php\" and configure the 'asset-files' extra key to check if the file has not been symlinked."
 
 touch "$SITE_APP/customfile.php"
-composer config extra.drupal-asset-files.should-not-be-simlinked customfile.php
+composer config extra.drupal-paranoia.asset-files.should-not-be-simlinked customfile.php
 
 # Rebuild web directory.
 composer drupal:paranoia || exit 1

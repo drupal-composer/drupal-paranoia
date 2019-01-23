@@ -21,7 +21,7 @@ class DrupalParanoiaCommand extends BaseCommand {
     parent::configure();
     $this
       ->setName('drupal:paranoia')
-      ->setAliases(['drupal-paranoia'])
+      ->setAliases(array('drupal-paranoia'))
       ->setDescription('Execute the installation of the paranoia mode.');
   }
 
