@@ -135,6 +135,28 @@ By the purpose of this plugin, the following files types are __not allowed__ and
 *.theme
 ```
 
+### Exclude paths
+With the drupal-paranoia option excludes, you can provide paths that should not be symlinked or stubbed to `/web` folder. The plugin provides no excludes by default.
+
+```json
+"extra": {
+    "drupal-paranoia": {
+        "app-dir": "app",
+        "web-dir": "web",
+        "excludes": [
+            "core/install.php",
+            "sites/simpletest"
+        ]
+    },
+    "..."
+}
+```
+
+__NOTE:__ Consider to exclude `/install.php` from your site. There are security concerns when this URL is publicly available, it can be used to create a list of contributed modules existing on the site.
+You can exclude it via plugin as described above or via `.htaccess` rules. 
+- [DO#2840973: Install system should not produce PHP errors](https://www.drupal.org/node/2840973)    
+- https://www.drupalxray.com
+
 ### Web server docroot
 Change the document root config of your web server to point to `/web` folder.
 
@@ -181,7 +203,7 @@ class MyClass implements PluginInterface, EventSubscriberInterface
 ```
 
 ## Local development
-Every time you install or update a Drupal package via Composer, the `/web` folder will recreated.
+Every time you install or update a Drupal package via Composer, the `/web` folder will be recreated.
 
 ```
 composer require drupal/devel:~1.0
