@@ -180,3 +180,20 @@ if [ -L "$SITE_WEB/customfile.php" ]; then
 else
   echo "${MSG_OK} 'composer drupal:paranoia' command did not re-create the web directory with WRONG extra symlinks"
 fi
+
+##
+# Test "excludes" config.
+# Run the command 'composer drupal:paranoia' and check if the excluded paths were not symlinked or stubbed.
+#
+echo "${MSG_INFO} Add paths to 'excludes' config and check if they have not been stubbed or symlinked."
+composer config extra.drupal-paranoia.excludes token_list_files; sed -i -e "s/\"token_list_files\"/\[\"core\/install.php\"\,\"core\/tests\"\]/" composer.json
+
+# Rebuild web directory.
+composer drupal:paranoia || exit 1
+
+if [ -f "$SITE_WEB/core/install.php" ] || [ -d "$SITE_WEB/core/tests" ]; then
+  echo "${MSG_ERROR} 'composer drupal:paranoia' command re-created the web directory with excluded files and folders"
+  exit 1
+else
+  echo "${MSG_OK} 'composer drupal:paranoia' command did not re-create the web directory with excluded files and folders"
+fi
