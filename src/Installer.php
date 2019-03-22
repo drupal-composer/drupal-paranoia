@@ -46,12 +46,12 @@ class Installer {
    *
    * @var array
    */
-  public $frontControllers = [
+  public $frontControllers = array(
     'index.php',
     'core/install.php',
     'core/rebuild.php',
     'core/modules/statistics/statistics.php',
-  ];
+  );
 
   /**
    * Flag indicating whether is to run the paranoia installation or not.
@@ -75,6 +75,13 @@ class Installer {
   public $webDir;
 
   /**
+   * List of paths that should not be symlinked or stubbed.
+   *
+   * @var array
+   */
+  public $excludes;
+
+  /**
    * Installer constructor.
    *
    * @param \Composer\Composer $composer
@@ -86,20 +93,74 @@ class Installer {
     $this->composer = $composer;
     $this->io = $io;
 
-    $extra = $this->composer->getPackage()->getExtra();
-
-    if (!isset($extra['drupal-app-dir'])) {
-      throw new \RuntimeException('Please configure drupal-app-dir in your composer.json');
+    $appDir = $this->getConfig('app-dir');
+    if (!$appDir) {
+      throw new \RuntimeException('Please configure app-dir in your composer.json');
     }
 
-    if (!isset($extra['drupal-web-dir'])) {
-      throw new \RuntimeException('Please configure drupal-web-dir in your composer.json');
+    $webDir = $this->getConfig('web-dir');
+    if (!$webDir) {
+      throw new \RuntimeException('Please configure web-dir in your composer.json');
     }
 
-    $this->appDir = $extra['drupal-app-dir'];
-    $this->webDir = $extra['drupal-web-dir'];
+    $this->appDir = $appDir;
+    $this->webDir = $webDir;
 
     $this->setAssetFileTypes();
+
+    $this->excludes = $this->getConfig('excludes', array());
+  }
+
+  /**
+   * Returns the value of a plugin config.
+   *
+   * @param string $name
+   *   The config name.
+   * @param mixed $default
+   *   The default value to return if the config does not exist.
+   *
+   * @return mixed
+   *   The config value.
+   */
+  public function getConfig($name, $default = NULL) {
+    $extra = $this->composer->getPackage()->getExtra();
+
+    // TODO: Backward compatibility for old configs. Remove on stable version.
+    $legacyConfigs = array(
+      'drupal-app-dir',
+      'drupal-web-dir',
+      'drupal-asset-files',
+    );
+    if (in_array("drupal-$name", $legacyConfigs) && isset($extra["drupal-$name"])) {
+      return $extra["drupal-$name"];
+    }
+
+    if (!isset($extra['drupal-paranoia'])) {
+      return $default;
+    }
+
+    if (isset($extra['drupal-paranoia'][$name])) {
+      return $extra['drupal-paranoia'][$name];
+    }
+
+    return $default;
+  }
+
+  /**
+   * Checks whether a path exists in the excludes list.
+   *
+   * @param string $path
+   *   The path.
+   *
+   * @return bool
+   *   Returns TRUE if the path is listed, FALSE otherwise.
+   */
+  public function isExcludedPath($path) {
+    if (!$this->excludes) {
+      return FALSE;
+    }
+
+    return in_array($path, $this->excludes);
   }
 
   /**
@@ -130,8 +191,8 @@ class Installer {
       return FALSE;
     }
 
-    $package_type = $package->getType();
-    if (!$package_type) {
+    $packageType = $package->getType();
+    if (!$packageType) {
       return FALSE;
     }
 
@@ -148,7 +209,7 @@ class Installer {
      *
      * @TODO: Add support for custom package types: 'oomphinc/composer-installers-extender' and 'davidbarratt/custom-installer'.
      */
-    if ((bool) preg_match("/(drupal)?-(core|module|theme|library|profile|drush|custom-module|custom-theme)/", $package_type)) {
+    if ((bool) preg_match("/(drupal)?-(core|module|theme|library|profile|drush|custom-module|custom-theme)/", $packageType)) {
       return TRUE;
     }
 
@@ -220,19 +281,42 @@ class Installer {
   }
 
   /**
+   * Returns a list containing the sites public files path.
+   *
+   * @return array
+   *   The path list.
+   */
+  public function getSitesPublicFilesPath() {
+    $finder = new Finder();
+    $finder->in($this->appDir . '/sites')
+      ->depth(0);
+
+    $directories = array();
+
+    /** @var \Symfony\Component\Finder\SplFileInfo $directory */
+    foreach ($finder->directories() as $directory) {
+      $publicFilesPath = 'sites/' . $directory->getFilename() . '/files';
+
+      if (!is_dir($this->appDir . '/' . $publicFilesPath)) {
+        continue;
+      }
+
+      $directories[] = $publicFilesPath;
+    }
+
+    return $directories;
+  }
+
+  /**
    * Symlink the public files folder.
    */
   public function createPublicFilesSymlink() {
     $cfs = new ComposerFilesystem();
-    $finder = new Finder();
+    $publicFilesPaths = $this->getSitesPublicFilesPath();
 
-    $finder->in($this->appDir . '/sites')
-      ->depth(0);
-
-    /** @var \Symfony\Component\Finder\SplFileInfo $directory */
-    foreach ($finder->directories() as $directory) {
-      $cfs->ensureDirectoryExists($this->webDir . '/sites/' . $directory->getFilename());
-      $cfs->relativeSymlink($directory->getRealPath() . '/files', realpath($this->webDir) . '/sites/' . $directory->getFilename() . '/files');
+    foreach ($publicFilesPaths as $path) {
+      $cfs->ensureDirectoryExists($this->webDir . '/' . dirname($path));
+      $cfs->relativeSymlink(realpath($this->appDir) . '/' . $path, realpath($this->webDir) . '/' . $path);
     }
   }
 
@@ -244,16 +328,36 @@ class Installer {
 
     $finder->ignoreDotFiles(FALSE)->in($this->appDir);
 
+    // Add asset files types to the search.
     foreach ($this->assetFileTypes as $name) {
       $finder->name($name);
     }
-    $finder->exclude('sites/default/files');
+
+    // Default extensions to exclude from the search.
     $finder->notName('*.inc');
     $finder->notName('*.install');
     $finder->notName('*.module');
+    $finder->notName('*.phar');
     $finder->notName('*.php');
     $finder->notName('*.profile');
     $finder->notName('*.theme');
+
+    // Ignores excluded paths.
+    foreach ($this->excludes as $excludedPath) {
+      // If is a file.
+      if (isset(pathinfo($excludedPath)['extension'])) {
+        $finder->notName($excludedPath);
+        continue;
+      }
+
+      // Is a folder.
+      $finder->exclude($excludedPath);
+    }
+
+    // Ignores sites public files path.
+    foreach ($this->getSitesPublicFilesPath() as $publicFilesPath) {
+      $finder->exclude($publicFilesPath);
+    }
 
     $cfs = new ComposerFilesystem();
 
@@ -270,6 +374,10 @@ class Installer {
    *   The PHP file from the app directory.
    */
   public function createStubPhpFile($path) {
+    if ($this->isExcludedPath($path)) {
+      return;
+    }
+
     $appDir = realpath($this->appDir);
     $webDir = realpath($this->webDir);
 
@@ -295,7 +403,7 @@ EOF;
    * Set the asset file types.
    */
   public function setAssetFileTypes() {
-    $this->assetFileTypes = [
+    $this->assetFileTypes = array(
       'robots.txt',
       '.htaccess',
       '*.css',
@@ -311,12 +419,12 @@ EOF;
       '*.ttf',
       '*.woff',
       '*.woff2',
-    ];
+    );
 
     // Allow people to extend the list from a composer extra key.
-    $extra = $this->composer->getPackage()->getExtra();
-    if (!empty($extra['drupal-asset-files'])) {
-      $this->assetFileTypes = array_merge($this->assetFileTypes, $extra['drupal-asset-files']);
+    $extraAssetFiles = $this->getConfig('asset-files');
+    if ($extraAssetFiles) {
+      $this->assetFileTypes = array_merge($this->assetFileTypes, $extraAssetFiles);
     }
 
     // Allow other plugins to alter the list of files.
