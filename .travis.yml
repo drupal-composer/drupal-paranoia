@@ -8,6 +8,8 @@ sudo: false
 
 php:
   - 7.1
+  - 7.2
+  - 7.3
 
 matrix:
   fast_finish: true
@@ -58,4 +60,4 @@ script:
   - $TRAVIS_BUILD_DIR/.travis/test-script.sh
 
   # Sniff code standards.
-  - phpcs --standard=Drupal --ignore=*.md,*.txt --warning-severity=0 -d date.timezone=UTC .
+  - phpcs --standard=Drupal --ignore=*.md,*.txt,.travis/* --warning-severity=0 -d date.timezone=UTC .
