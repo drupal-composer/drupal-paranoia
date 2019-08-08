@@ -72,13 +72,24 @@ done
 # Check if there are no PHP files in the "web" folder.
 # It is ignoring the stub files.
 #
-if [ $( grep -Rl "<?php" "$SITE_WEB" | awk '{print $0" "}' | tr -d '\n' | grep -vc "$SITE_WEB/index.php $SITE_WEB/core/install.php $SITE_WEB/core/rebuild.php $SITE_WEB/core/modules/statistics/statistics.php" ) -eq 1 ]; then
-  grep -Rl "<?php" "$SITE_WEB"
-  echo "${MSG_ERROR} there are PHP files (non-stub files) in the web directory"
-  exit 1
-else
-  echo "${MSG_OK} there are no PHP files (non-stub files) in the web directory"
-fi
+PHP_FILES=($( grep -Rl "<?php" "$SITE_WEB" ))
+
+for PHP_FILE_PATH in ${PHP_FILES[*]}; do
+  IS_STUB_FILE='false'
+
+  for STUB_FILE_PATH in ${STUB_FILES[*]}; do
+    if [ "$PHP_FILE_PATH" = "$SITE_ROOT/$STUB_FILE_PATH" ]; then
+      IS_STUB_FILE='true'
+      break
+    fi
+  done
+
+  if [ "$IS_STUB_FILE" = 'false' ]; then
+    echo "${MSG_ERROR} there are PHP files (non-stub files) in the web directory: $PHP_FILE_PATH"
+    exit 1
+  fi
+done
+echo "${MSG_OK} there are no PHP files (non-stub files) in the web directory"
 
 ##
 # Install a Drupal package using Composer and check if the package's assets have been symlinked.
