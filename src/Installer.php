@@ -413,6 +413,7 @@ EOF;
       '*.jpeg',
       '*.jpg',
       '*.js',
+      '*.map',
       '*.otf',
       '*.png',
       '*.svg',
