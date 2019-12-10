@@ -2,6 +2,10 @@
 
 ## Releases
 
+### 1.0.0, 2019-12-10
+- [PR#17] Added *.map file extension to assets list.
+- Created first stable release.
+
 ### 1.0.0-beta4, 2019-01-24
 - [PR#13] Added new config 'excludes' to be able to exclude paths to be symlinked or stubbed in web folder.
 - Performance enhancement: Added sites public files path to exclude list when searching for asset files. 
