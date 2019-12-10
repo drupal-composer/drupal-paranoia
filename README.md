@@ -68,6 +68,7 @@ robots.txt
 *.jpeg
 *.jpg
 *.js
+*.map
 *.otf
 *.png
 *.svg
