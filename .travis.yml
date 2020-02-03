@@ -24,6 +24,7 @@ env:
 
     - SITE_NAME="mysite"
     - SITE_ROOT="$TRAVIS_BUILD_DIR/../$SITE_NAME"
+    - COMPOSER_MEMORY_LIMIT=-1
 
 before_install:
   # Disable xdebug.
