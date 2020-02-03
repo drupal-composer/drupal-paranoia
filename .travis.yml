@@ -4,7 +4,7 @@
 language: php
 
 ## Run on container environment
-sudo: false
+sudo: true
 
 php:
   - 7.1
