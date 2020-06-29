@@ -287,11 +287,16 @@ class Installer {
    *   The path list.
    */
   public function getSitesPublicFilesPath() {
-    $finder = new Finder();
-    $finder->in($this->appDir . '/sites')
-      ->depth(0);
-
     $directories = array();
+
+    try {
+      $finder = new Finder();
+      $finder->in($this->appDir . '/sites')
+          ->depth(0);
+    }
+    catch (\Exception $e) {
+      return $directories;
+    }
 
     /** @var \Symfony\Component\Finder\SplFileInfo $directory */
     foreach ($finder->directories() as $directory) {
