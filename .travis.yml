@@ -43,7 +43,7 @@ before_install:
 
 install:
   # Create Drupal project.
-  - composer create-project drupal-composer/drupal-project:8.x-dev --stability dev --no-interaction --no-dev --prefer-dist -vvv "$SITE_ROOT" || exit 1
+  - composer create-project drupal-composer/drupal-project:9.x-dev --stability dev --no-interaction --no-dev --prefer-dist -vvv "$SITE_ROOT" || exit 1
 
   # https://github.com/drupal-composer/drupal-paranoia#configuration
   - cd "$SITE_ROOT"; mv "$SITE_ROOT/web" "$SITE_ROOT/app"
