@@ -2,6 +2,9 @@
 
 ## Releases
 
+### 1.1.0, 2020-11-18
+- [PR#22] Added support for Composer 2.
+
 ### 1.0.0, 2019-12-10
 - [PR#17] Added *.map file extension to assets list.
 - Created first stable release.
