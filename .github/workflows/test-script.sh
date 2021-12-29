@@ -3,12 +3,6 @@ SITE_ROOT="/tmp/site/mysite"
 SITE_WEB="$SITE_ROOT/web"
 SITE_APP="$SITE_ROOT/app"
 
-
-ls -la /tmp/site/mysite
-ls -la "$SITE_WEB"
-ls -la "$SITE_APP"
-ls -la /tmp/site/mysite/app
-
 # Colors.
 RED=$'\E[1;31m'
 GREEN=$'\E[1;32m'
@@ -40,6 +34,8 @@ if [ ! -d "$SITE_WEB" ]; then
 else
   echo "${MSG_OK} 'web' folder exists"
 fi
+
+cd "$SITE_ROOT"
 
 ##
 # Check if the stub files exist.
