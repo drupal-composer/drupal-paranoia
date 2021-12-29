@@ -17,7 +17,6 @@ MSG_INFO="${BLUE}[INFO]${COLOR_RESET}"
 ##
 # Check if the "app" folder exists.
 #
-echo "$SITE_APP"
 if [ ! -d "$SITE_APP" ]; then
   echo "${MSG_ERROR} 'app' folder does not exist"
   exit 1

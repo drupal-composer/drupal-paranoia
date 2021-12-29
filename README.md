@@ -1,5 +1,5 @@
 [![Packagist Downloads](https://img.shields.io/packagist/dt/drupal-composer/drupal-paranoia.svg)](https://packagist.org/packages/drupal-composer/drupal-paranoia)
-[![Build Status](https://travis-ci.org/drupal-composer/drupal-paranoia.svg?branch=1.x)](https://travis-ci.org/drupal-composer/drupal-paranoia)
+[![Testing](https://github.com/drupal-composer/drupal-paranoia/actions/workflows/testing.yml/badge.svg)](https://github.com/drupal-composer/drupal-paranoia/actions/workflows/testing.yml)
 
 # Drupal Paranoia
 Composer plugin for improving the website security for composer-based Drupal websites by moving all __PHP files out of docroot__.
