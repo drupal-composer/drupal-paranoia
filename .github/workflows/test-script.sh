@@ -7,6 +7,7 @@ SITE_APP="$SITE_ROOT/app"
 ls -la /tmp/site/mysite
 ls -la "$SITE_WEB"
 ls -la "$SITE_APP"
+ls -la /tmp/site/mysite/app
 
 # Colors.
 RED=$'\E[1;31m'
