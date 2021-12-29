@@ -17,15 +17,6 @@ jobs:
           php composer-setup.php
           php -r "unlink('composer-setup.php');"
           mv composer.phar /usr/local/bin/composer
-          COMPOSER_MEMORY_LIMIT=-1
-      -
-        name: "Install PHP Code Sniffer"
-        run: |
-          COMPOSER_GLOBAL_HOME=$( composer -n config --global home )
-          PATH="$PATH:$COMPOSER_GLOBAL_HOME/vendor/bin"
-          composer global require drupal/coder --prefer-dist || exit 1
-          phpcs --config-set installed_paths "$COMPOSER_GLOBAL_HOME/vendor/drupal/coder/coder_sniffer"
-          phpcs --config-set ignore_warnings_on_exit 1
       -
         name: "Install a site"
         run: |
@@ -33,19 +24,26 @@ jobs:
           composer create-project drupal-composer/drupal-project:9.x-dev --stability dev --no-interaction --no-dev --prefer-dist "$SITE_ROOT" || exit 1
 
           # https://github.com/drupal-composer/drupal-paranoia#configuration
-          cd "$SITE_ROOT"; mv "$SITE_ROOT/web" "$SITE_ROOT/app"
+          cd "$SITE_ROOT"
+          mv "$SITE_ROOT/web" "$SITE_ROOT/app"
           sed -e "s?web/?app/?g" --in-place "$SITE_ROOT/composer.json"
-          cd "$SITE_ROOT"; composer config extra.drupal-paranoia.app-dir app
-          cd "$SITE_ROOT"; composer config extra.drupal-paranoia.web-dir web
+          composer config extra.drupal-paranoia.app-dir app
+          composer config extra.drupal-paranoia.web-dir web
 
           # Require local drupal-paranoia project.
-          cd "$SITE_ROOT"; composer config repositories.local_drupal_paranoia path "$GITHUB_WORKSPACE"
-          cd "$SITE_ROOT"; composer require --update-no-dev drupal-composer/drupal-paranoia:"*" || exit 1
+          composer config repositories.local_drupal_paranoia path "$GITHUB_WORKSPACE"
+          composer require --update-no-dev drupal-composer/drupal-paranoia:"*" || exit 1
+      -
+        name: "Sniff code standards"
+        run: |
+          COMPOSER_GLOBAL_HOME=$( composer -n config --global home )
+          PATH="$PATH:$COMPOSER_GLOBAL_HOME/vendor/bin"
+          composer global require drupal/coder --prefer-dist || exit 1
+          phpcs --config-set installed_paths "$COMPOSER_GLOBAL_HOME/vendor/drupal/coder/coder_sniffer"
+          phpcs --config-set ignore_warnings_on_exit 1
+          phpcs --standard=Drupal --ignore=*.md,*.txt,.github/* --warning-severity=0 -d date.timezone=UTC .
       -
         name: "Run Test"
         run: |
           # Run test script.
           $GITHUB_WORKSPACE/.github/workflows/test-script.sh
-
-          # Sniff code standards.
-          "$COMPOSER_GLOBAL_HOME/vendor/bin/phpcs" --standard=Drupal --ignore=*.md,*.txt,.github/* --warning-severity=0 -d date.timezone=UTC .
