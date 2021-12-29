@@ -22,7 +22,6 @@ jobs:
         name: "Install PHP Code Sniffer"
         run: |
           COMPOSER_GLOBAL_HOME=$( composer -n config --global home )
-          export PATH="$PATH:$COMPOSER_GLOBAL_HOME/vendor/bin"
           composer global require drupal/coder --prefer-dist || exit 1
           phpcs --config-set installed_paths "$COMPOSER_GLOBAL_HOME/vendor/drupal/coder/coder_sniffer"
           phpcs --config-set ignore_warnings_on_exit 1
@@ -48,4 +47,4 @@ jobs:
           $GITHUB_WORKSPACE/.github/workflows/test-script.sh
 
           # Sniff code standards.
-          phpcs --standard=Drupal --ignore=*.md,*.txt,.github/* --warning-severity=0 -d date.timezone=UTC .
+          "$COMPOSER_GLOBAL_HOME/vendor/bin/phpcs" --standard=Drupal --ignore=*.md,*.txt,.github/* --warning-severity=0 -d date.timezone=UTC .
