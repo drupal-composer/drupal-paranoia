@@ -46,12 +46,12 @@ class Installer {
    *
    * @var array
    */
-  public $frontControllers = array(
+  public $frontControllers = [
     'index.php',
     'core/install.php',
     'core/rebuild.php',
     'core/modules/statistics/statistics.php',
-  );
+  ];
 
   /**
    * Flag indicating whether is to run the paranoia installation or not.
@@ -108,7 +108,7 @@ class Installer {
 
     $this->setAssetFileTypes();
 
-    $this->excludes = $this->getConfig('excludes', array());
+    $this->excludes = $this->getConfig('excludes', []);
   }
 
   /**
@@ -126,11 +126,11 @@ class Installer {
     $extra = $this->composer->getPackage()->getExtra();
 
     // TODO: Backward compatibility for old configs. Remove on stable version.
-    $legacyConfigs = array(
+    $legacyConfigs = [
       'drupal-app-dir',
       'drupal-web-dir',
       'drupal-asset-files',
-    );
+    ];
     if (in_array("drupal-$name", $legacyConfigs) && isset($extra["drupal-$name"])) {
       return $extra["drupal-$name"];
     }
@@ -264,7 +264,7 @@ class Installer {
     }
 
     // Ensure that the app and web directories exist.
-    $fs->mkdir(array($this->appDir, $this->webDir));
+    $fs->mkdir([$this->appDir, $this->webDir]);
 
     // Create the stub files.
     foreach ($this->frontControllers as $fileName) {
@@ -291,7 +291,7 @@ class Installer {
     $finder->in($this->appDir . '/sites')
       ->depth(0);
 
-    $directories = array();
+    $directories = [];
 
     /** @var \Symfony\Component\Finder\SplFileInfo $directory */
     foreach ($finder->directories() as $directory) {
@@ -403,7 +403,7 @@ EOF;
    * Set the asset file types.
    */
   public function setAssetFileTypes() {
-    $this->assetFileTypes = array(
+    $this->assetFileTypes = [
       'robots.txt',
       '.htaccess',
       '*.css',
@@ -420,7 +420,7 @@ EOF;
       '*.ttf',
       '*.woff',
       '*.woff2',
-    );
+    ];
 
     // Allow people to extend the list from a composer extra key.
     $extraAssetFiles = $this->getConfig('asset-files');
