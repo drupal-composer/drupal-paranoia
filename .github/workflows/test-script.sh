@@ -4,7 +4,7 @@ SITE_WEB="$SITE_ROOT/web"
 SITE_APP="$SITE_ROOT/app"
 
 
-ls -la /tmp/site
+ls -la /tmp/site/mysite
 ls -la "$SITE_WEB"
 ls -la "$SITE_APP"
 
