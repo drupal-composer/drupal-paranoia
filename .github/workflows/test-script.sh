@@ -3,6 +3,11 @@ SITE_ROOT="/tmp/site/mysite"
 SITE_WEB="$SITE_ROOT/web"
 SITE_APP="$SITE_ROOT/app"
 
+
+ls -l /tmp
+ls -l "$SITE_WEB"
+ls -l "$SITE_APP"
+
 # Colors.
 RED=$'\E[1;31m'
 GREEN=$'\E[1;32m'
