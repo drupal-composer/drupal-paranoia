@@ -22,6 +22,7 @@ jobs:
         name: "Install PHP Code Sniffer"
         run: |
           COMPOSER_GLOBAL_HOME=$( composer -n config --global home )
+          PATH="$PATH:$COMPOSER_GLOBAL_HOME/vendor/bin"
           composer global require drupal/coder --prefer-dist || exit 1
           phpcs --config-set installed_paths "$COMPOSER_GLOBAL_HOME/vendor/drupal/coder/coder_sniffer"
           phpcs --config-set ignore_warnings_on_exit 1
