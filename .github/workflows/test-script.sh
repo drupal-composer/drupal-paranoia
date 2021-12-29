@@ -123,12 +123,12 @@ fi
 ##
 # Create a theme image, run the command 'composer drupal:paranoia' and check if the image has been symlinked.
 #
-touch "$SITE_APP/themes/travis-test-image.jpg"
+touch "$SITE_APP/themes/test-image.jpg"
 
 # Rebuild web directory.
 composer drupal:paranoia || exit 1
 
-if [ ! -L "$SITE_WEB/themes/travis-test-image.jpg" ]; then
+if [ ! -L "$SITE_WEB/themes/test-image.jpg" ]; then
   echo "${MSG_ERROR} 'composer drupal:paranoia' command did not re-create the web directory with new symlinks"
   exit 1
 else
