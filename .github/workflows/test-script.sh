@@ -4,9 +4,9 @@ SITE_WEB="$SITE_ROOT/web"
 SITE_APP="$SITE_ROOT/app"
 
 
-ls -l /tmp
-ls -l "$SITE_WEB"
-ls -l "$SITE_APP"
+ls -la /tmp/site
+ls -la "$SITE_WEB"
+ls -la "$SITE_APP"
 
 # Colors.
 RED=$'\E[1;31m'
