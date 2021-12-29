@@ -2,6 +2,9 @@
 
 ## Releases
 
+### 1.1.1, 2020-12-29
+- [PR#23] Added return code to DrupalParanoiaCommand.
+
 ### 1.1.0, 2020-11-18
 - [PR#22] Added support for Composer 2.
 
