@@ -23,14 +23,14 @@ jobs:
         run: |
           COMPOSER_GLOBAL_HOME=$( composer -n config --global home )
           PATH="$PATH:$COMPOSER_GLOBAL_HOME/vendor/bin"
-          composer global require drupal/coder --prefer-dist -vvv || exit 1
+          composer global require drupal/coder --prefer-dist || exit 1
           phpcs --config-set installed_paths "$COMPOSER_GLOBAL_HOME/vendor/drupal/coder/coder_sniffer"
           phpcs --config-set ignore_warnings_on_exit 1
       -
         name: "Install a site"
         run: |
           # Create Drupal project.
-          composer create-project drupal-composer/drupal-project:9.x-dev --stability dev --no-interaction --no-dev --prefer-dist -vvv "$SITE_ROOT" || exit 1
+          composer create-project drupal-composer/drupal-project:9.x-dev --stability dev --no-interaction --no-dev --prefer-dist "$SITE_ROOT" || exit 1
 
           # https://github.com/drupal-composer/drupal-paranoia#configuration
           cd "$SITE_ROOT"; mv "$SITE_ROOT/web" "$SITE_ROOT/app"
@@ -40,7 +40,7 @@ jobs:
 
           # Require local drupal-paranoia project.
           cd "$SITE_ROOT"; composer config repositories.local_drupal_paranoia path "$GITHUB_WORKSPACE"
-          cd "$SITE_ROOT"; composer require --update-no-dev drupal-composer/drupal-paranoia:"*" -vvv || exit 1
+          cd "$SITE_ROOT"; composer require --update-no-dev drupal-composer/drupal-paranoia:"*" || exit 1
       -
         name: "Run Test"
         run: |

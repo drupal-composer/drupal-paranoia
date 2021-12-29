@@ -1,5 +1,5 @@
 #!/bin/bash
-
+SITE_ROOT="/tmp/site/mysite"
 SITE_WEB="$SITE_ROOT/web"
 SITE_APP="$SITE_ROOT/app"
 
