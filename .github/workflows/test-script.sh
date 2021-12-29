@@ -20,26 +20,6 @@ MSG_OK="${GREEN}[OK]${COLOR_RESET}"
 MSG_INFO="${BLUE}[INFO]${COLOR_RESET}"
 
 ##
-# Check if the "app" folder exists.
-#
-if [ ! -d "$SITE_APP" ]; then
-  echo "${MSG_ERROR} 'app' folder does not exist"
-  exit 1
-else
-  echo "${MSG_OK} 'app' folder exists"
-fi
-
-##
-# Check if the "web" folder exists.
-#
-if [ ! -d "$SITE_WEB" ]; then
-  echo "${MSG_ERROR} 'web' folder does not exist"
-  exit 1
-else
-  echo "${MSG_OK} 'web' folder exists"
-fi
-
-##
 # Check if the stub files exist.
 # See \DrupalComposer\DrupalParanoia $frontControllers
 #
