@@ -35,6 +35,8 @@ class DrupalParanoiaCommand extends BaseCommand {
     $composer = $this->getComposer();
     $commandEvent = new CommandEvent(PluginEvents::POST_COMMAND_RUN, 'drupal:paranoia', $input, $output);
     $composer->getEventDispatcher()->dispatch($commandEvent->getName(), $commandEvent);
+
+    return 0;
   }
 
 }
