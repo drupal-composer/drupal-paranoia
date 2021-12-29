@@ -1,0 +1,49 @@
+name: "Testing"
+on: push
+env:
+  SITE_NAME: "mysite"
+  SITE_ROOT: "/tmp/site/mysite"
+jobs:
+  testing:
+    name: "Automated tests"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      -
+        name: "Install Composer"
+        run: |
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php -r "if (hash_file('sha384', 'composer-setup.php') === '906a84df04cea2aa72f40b5f787e49f22d4c2f19492ac310e8cba5b96ac8b64115ac402c8cd292b8a03482574915d1a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+          php composer-setup.php
+          php -r "unlink('composer-setup.php');"
+          mv composer.phar /usr/local/bin/composer
+      -
+        name: "Install a site"
+        run: |
+          # Create Drupal project.
+          composer create-project drupal-composer/drupal-project:9.x-dev --stability dev --no-interaction --no-dev --prefer-dist "$SITE_ROOT" || exit 1
+
+          # https://github.com/drupal-composer/drupal-paranoia#configuration
+          cd "$SITE_ROOT"
+          mv "$SITE_ROOT/web" "$SITE_ROOT/app"
+          sed -e "s?web/?app/?g" --in-place "$SITE_ROOT/composer.json"
+          composer config extra.drupal-paranoia.app-dir app
+          composer config extra.drupal-paranoia.web-dir web
+
+          # Require local drupal-paranoia project.
+          composer config repositories.local_drupal_paranoia path "$GITHUB_WORKSPACE"
+          composer require --update-no-dev drupal-composer/drupal-paranoia:"*" || exit 1
+      -
+        name: "Sniff code standards"
+        run: |
+          COMPOSER_GLOBAL_HOME=$( composer -n config --global home )
+          PATH="$PATH:$COMPOSER_GLOBAL_HOME/vendor/bin"
+          composer global require drupal/coder --prefer-dist || exit 1
+          phpcs --config-set installed_paths "$COMPOSER_GLOBAL_HOME/vendor/drupal/coder/coder_sniffer"
+          phpcs --config-set ignore_warnings_on_exit 1
+          phpcs --standard=Drupal --ignore=*.md,*.txt,.github/* --warning-severity=0 -d date.timezone=UTC .
+      -
+        name: "Run Test"
+        run: |
+          # Run test script.
+          $GITHUB_WORKSPACE/.github/workflows/test-script.sh

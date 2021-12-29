@@ -55,7 +55,7 @@ class AssetFileTypesEvent extends Event {
    * @param array $flags
    *   Optional flags to pass data not as argument.
    */
-  public function __construct(array $assetFileTypes, Composer $composer, IOInterface $io, array $args = array(), array $flags = array()) {
+  public function __construct(array $assetFileTypes, Composer $composer, IOInterface $io, array $args = [], array $flags = []) {
     parent::__construct(self::POST_DRUPAL_SET_ASSET_FILE_TYPES, $args, $flags);
 
     $this->composer = $composer;

@@ -45,22 +45,22 @@ class Plugin implements PluginInterface, EventSubscriberInterface, Capable {
    * {@inheritdoc}
    */
   public function getCapabilities() {
-    return array(
+    return [
       'Composer\Plugin\Capability\CommandProvider' => 'DrupalComposer\DrupalParanoia\CommandProvider',
-    );
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    return array(
-      PackageEvents::POST_PACKAGE_INSTALL => array('postPackage'),
-      PackageEvents::POST_PACKAGE_UPDATE => array('postPackage'),
-      PackageEvents::POST_PACKAGE_UNINSTALL => array('postPackage'),
-      ScriptEvents::POST_INSTALL_CMD => array('postCmd', -1),
-      ScriptEvents::POST_UPDATE_CMD => array('postCmd', -1),
-    );
+    return [
+      PackageEvents::POST_PACKAGE_INSTALL => ['postPackage'],
+      PackageEvents::POST_PACKAGE_UPDATE => ['postPackage'],
+      PackageEvents::POST_PACKAGE_UNINSTALL => ['postPackage'],
+      ScriptEvents::POST_INSTALL_CMD => ['postCmd', -1],
+      ScriptEvents::POST_UPDATE_CMD => ['postCmd', -1],
+    ];
   }
 
   /**

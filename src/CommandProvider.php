@@ -15,9 +15,9 @@ class CommandProvider implements CommandProviderCapability {
    * {@inheritdoc}
    */
   public function getCommands() {
-    return array(
+    return [
       new DrupalParanoiaCommand(),
-    );
+    ];
   }
 
 }
